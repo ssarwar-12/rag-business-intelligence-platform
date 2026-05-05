@@ -274,6 +274,27 @@ Preferred local setup:
 
 Full Docker Compose can include backend and frontend once app entrypoints are stable.
 
+## Phase 1 Backend Shape
+
+The backend now exists under `apps/api` with:
+
+- FastAPI application entrypoint in `app/main.py`.
+- SQLAlchemy session setup in `app/db/session.py`.
+- Declarative models in `app/models`.
+- Pydantic schemas in `app/schemas`.
+- Routers in `app/api/routes`.
+- Alembic migration files in `alembic`.
+
+At startup, the API can create tables automatically when `AUTO_CREATE_TABLES=true`, then ensures a demo user exists. Alembic remains the intended schema management path for PostgreSQL-backed development.
+
+Implemented Phase 1 routes:
+
+- `GET /health`
+- `POST /workspaces`
+- `GET /workspaces`
+- `POST /workspaces/{workspace_id}/documents/upload`
+- `GET /workspaces/{workspace_id}/documents`
+
 ## Extension Points
 
 Likely future improvements:

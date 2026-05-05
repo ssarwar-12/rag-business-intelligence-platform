@@ -110,12 +110,11 @@ When changing major component boundaries, update `docs/ARCHITECTURE.md`.
 
 ## Commands
 
-Commands are not finalized yet because the apps have not been scaffolded. Once created, prefer adding stable scripts and keeping this section updated.
-
-Expected backend commands:
+Backend commands:
 
 ```bash
 cd apps/api
+python -m pip install -e ".[test]"
 pytest
 alembic upgrade head
 uvicorn app.main:app --reload
