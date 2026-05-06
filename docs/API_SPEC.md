@@ -132,11 +132,63 @@ Errors:
 
 - `404`: workspace not found
 
+### `POST /workspaces/{workspace_id}/documents/{document_id}/ingest`
+
+Runs ingestion for one uploaded document.
+
+The backend:
+
+1. marks the document `processing`
+2. loads the persisted file
+3. extracts text or CSV row content
+4. chunks the extracted content
+5. stores chunks in PostgreSQL
+6. marks the document `completed` or `failed`
+
+Response `200` on successful ingestion:
+
+```json
+{
+  "document": {
+    "id": "65be9ecc-4520-42f4-ae16-cf028ce70f58",
+    "workspace_id": "6d5779be-983a-42cf-9855-f9e178dc8334",
+    "filename": "quarterly_report.txt",
+    "file_type": "txt",
+    "status": "completed",
+    "error_message": null,
+    "created_at": "2026-05-05T06:35:00Z",
+    "updated_at": "2026-05-05T06:36:00Z"
+  },
+  "chunk_count": 3
+}
+```
+
+Response `200` when ingestion runs but fails:
+
+```json
+{
+  "document": {
+    "id": "65be9ecc-4520-42f4-ae16-cf028ce70f58",
+    "workspace_id": "6d5779be-983a-42cf-9855-f9e178dc8334",
+    "filename": "quarterly_report.txt",
+    "file_type": "txt",
+    "status": "failed",
+    "error_message": "Uploaded file not found: uploads/...",
+    "created_at": "2026-05-05T06:35:00Z",
+    "updated_at": "2026-05-05T06:36:00Z"
+  },
+  "chunk_count": 0
+}
+```
+
+Errors:
+
+- `404`: workspace or document not found
+
 ## Not Implemented Yet
 
 These endpoints are planned for later phases:
 
-- `POST /workspaces/{workspace_id}/documents/{document_id}/ingest`
 - `POST /workspaces/{workspace_id}/chat`
 - `GET /workspaces/{workspace_id}/conversations`
 - `GET /workspaces/{workspace_id}/analytics`

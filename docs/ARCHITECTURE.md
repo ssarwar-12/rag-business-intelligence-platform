@@ -295,6 +295,21 @@ Implemented Phase 1 routes:
 - `POST /workspaces/{workspace_id}/documents/upload`
 - `GET /workspaces/{workspace_id}/documents`
 
+## Phase 2 Ingestion Shape
+
+The backend now includes ingestion modules under `app/ingestion`:
+
+- `loaders.py`: PDF, TXT, Markdown, and CSV extraction.
+- `csv_summary.py`: CSV column, row, numeric, and missing-value summaries.
+- `chunking.py`: character-based chunking with overlap and source metadata.
+- `pipeline.py`: document status transitions and chunk persistence.
+
+The vector store abstraction now exists under `app/vectorstores`. Phase 2 defines the protocol and local JSON-backed vector store, but ingestion does not generate embeddings or upsert vectors yet.
+
+Implemented Phase 2 route:
+
+- `POST /workspaces/{workspace_id}/documents/{document_id}/ingest`
+
 ## Extension Points
 
 Likely future improvements:

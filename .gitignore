@@ -15,6 +15,7 @@ build/
 
 uploads/
 dev.db
+local_vector_store.json
 .DS_Store
 
 *.log

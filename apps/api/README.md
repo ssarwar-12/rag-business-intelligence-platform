@@ -13,10 +13,14 @@ Implemented:
 - Health endpoint.
 - Workspace create/list endpoints.
 - Document upload/list metadata endpoints.
+- Document ingestion endpoint.
+- PDF, TXT, Markdown, and CSV extraction.
+- CSV summary generation.
+- Chunk storage in PostgreSQL.
+- Local vector store abstraction.
 
 Not implemented yet:
 
-- Document ingestion.
 - Embeddings and vector search.
 - RAG chat.
 - Analytics endpoints.

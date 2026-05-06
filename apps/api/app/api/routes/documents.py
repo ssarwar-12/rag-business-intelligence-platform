@@ -2,14 +2,17 @@ from pathlib import Path
 from uuid import UUID, uuid4
 
 from fastapi import APIRouter, Depends, File, HTTPException, UploadFile, status
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
 from app.api.deps import get_db, get_demo_workspace
 from app.core.config import settings
+from app.ingestion.pipeline import ingest_document
 from app.models.document import Document, DocumentStatus
+from app.models.document_chunk import DocumentChunk
 from app.models.workspace import Workspace
 from app.schemas.document import DocumentRead
+from app.schemas.ingestion import IngestionResponse
 
 router = APIRouter(prefix="/workspaces/{workspace_id}/documents", tags=["documents"])
 
@@ -77,3 +80,28 @@ def list_documents(
             .order_by(Document.created_at.desc())
         )
     )
+
+
+@router.post("/{document_id}/ingest", response_model=IngestionResponse)
+def ingest_uploaded_document(
+    document_id: UUID,
+    db: Session = Depends(get_db),
+    workspace: Workspace = Depends(get_demo_workspace),
+) -> IngestionResponse:
+    document = db.scalar(
+        select(Document).where(
+            Document.id == document_id,
+            Document.workspace_id == workspace.id,
+        )
+    )
+    if document is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Document not found",
+        )
+
+    document = ingest_document(db, document)
+    chunk_count = db.scalar(
+        select(func.count(DocumentChunk.id)).where(DocumentChunk.document_id == document.id)
+    )
+    return IngestionResponse(document=document, chunk_count=chunk_count or 0)
