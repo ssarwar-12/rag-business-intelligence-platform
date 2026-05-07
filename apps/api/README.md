@@ -2,7 +2,7 @@
 
 FastAPI backend for the Smart Enterprise RAG Knowledge Base.
 
-## Phase 1 Scope
+## Current Scope
 
 Implemented:
 
@@ -18,12 +18,19 @@ Implemented:
 - CSV summary generation.
 - Chunk storage in PostgreSQL.
 - Local vector store abstraction.
+- OpenAI embedding integration.
+- Vector upsert during ingestion.
+- RAG chat endpoint.
+- Conversation and message persistence.
+- Query logging.
+- Conversation listing/detail endpoints.
+- Workspace analytics endpoint.
 
 Not implemented yet:
 
-- Embeddings and vector search.
-- RAG chat.
-- Analytics endpoints.
+- Pinecone vector store implementation.
+- Streaming chat.
+- Production authentication.
 
 ## Local Commands
 
@@ -36,3 +43,5 @@ pytest
 ```
 
 Set configuration with `.env` or environment variables. Do not commit real `.env` files.
+
+For ingestion and chat, set `OPENAI_API_KEY`. If the key is missing, ingestion marks documents failed with a clear error and chat returns `503 Service Unavailable`.

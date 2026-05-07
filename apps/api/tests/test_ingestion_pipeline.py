@@ -7,6 +7,15 @@ from app.ingestion.pipeline import ingest_document
 from app.models.document import Document, DocumentStatus
 from app.models.document_chunk import DocumentChunk
 from app.models.workspace import Workspace
+from app.vectorstores.local import LocalVectorStore
+
+
+class FakeEmbeddingClient:
+    def embed_texts(self, texts: list[str]) -> list[list[float]]:
+        return [[float(index + 1), 0.0] for index, _ in enumerate(texts)]
+
+    def embed_query(self, text: str) -> list[float]:
+        return [1.0, 0.0]
 
 
 def test_ingest_document_success_stores_chunks(tmp_path) -> None:
@@ -30,7 +39,12 @@ def test_ingest_document_success_stores_chunks(tmp_path) -> None:
         db.commit()
         db.refresh(document)
 
-        result = ingest_document(db, document)
+        result = ingest_document(
+            db,
+            document,
+            embedding_client=FakeEmbeddingClient(),
+            vector_store=LocalVectorStore(tmp_path / "vectors.json"),
+        )
         chunk_count = db.scalar(
             select(func.count(DocumentChunk.id)).where(DocumentChunk.document_id == result.id)
         )
@@ -60,7 +74,12 @@ def test_ingest_document_failure_marks_document_failed(tmp_path) -> None:
         db.commit()
         db.refresh(document)
 
-        result = ingest_document(db, document)
+        result = ingest_document(
+            db,
+            document,
+            embedding_client=FakeEmbeddingClient(),
+            vector_store=LocalVectorStore(tmp_path / "vectors.json"),
+        )
 
     assert result.status == DocumentStatus.failed
     assert result.error_message

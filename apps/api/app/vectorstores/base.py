@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from typing import Protocol
+from typing import Any, Protocol
 
 
 @dataclass(frozen=True)
@@ -8,7 +8,7 @@ class EmbeddedChunk:
     document_id: str
     workspace_id: str
     embedding: list[float]
-    metadata: dict[str, str | int | float | bool | None] = field(default_factory=dict)
+    metadata: dict[str, Any] = field(default_factory=dict)
 
 
 @dataclass(frozen=True)
